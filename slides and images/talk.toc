@@ -1,0 +1,5 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Geometry}{3}{0}{1}
+\beamer@sectionintoc {2}{Path-SGD: Approximate Path-Regularized Steepest Descent}{23}{0}{2}
+\beamer@sectionintoc {3}{Experiments}{29}{0}{3}
+\beamer@sectionintoc {4}{Conclusion}{35}{0}{4}

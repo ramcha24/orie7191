@@ -63,6 +63,28 @@
 \titlepage
 \end{frame}
 
+
+\begin{frame}{Quiz}
+\bit 
+\item Which of these algorithms perform better for balanced network as opposed to unbalanced network 
+\begin{enumerate}
+	\item Gradient descent
+	\item Stochastic gradient descent
+	\item AdaGrad
+	\item \RSGD
+\end{enumerate}
+
+\item Modifying weights of RELU Feedforward Neural Network \_\_\_\_\_ changes the predictions.  
+\begin{enumerate}
+	\item always 
+	\item sometimes
+	\item never 
+\end{enumerate}
+\eit 	
+\end{frame}
+
+
+
 \section{Geometry}
 
 \begin{frame}{Motivation - Link Between Geometry and Optimization Algorithms}
@@ -139,7 +161,10 @@ $f_{G,\mathbf{w},\relu}$.
 \item The resulting network still computes the same function. 
 
 \item Therefore RELU Networks are invariant to such a rescaling. 
-\eit 
+
+\eit
+\textit{What kind of activation functions would be similarly rescaling invariant?} 
+ 
 \end{frame} 
 
 \begin{frame}{Mathematical description of rescaling}
@@ -215,9 +240,9 @@ networks.
 	%\caption{}
 \end{figure}
 
-\item Can you think of a way to fix this?
-
 \eit
+\textit{ Can you think of a way to fix this?
+}
 \end{frame}
 
 
@@ -269,15 +294,13 @@ parametrized by $1\leq p,q \leq\infty$ is defined as
 \begin{definition}[Max-norm regularizer]
 The max-norm regularizer is defined as 
 \begin{equation*}
-\label{eq:mu}
 \mu_{p,\infty}(w) =\sup_{v \in V}\left(\sum_{(u\rightarrow v) \in E} \left\lvert w_{(u\rightarrow v)}\right\rvert ^p\right)^{1/p}
 \end{equation*}
-
 This is equivalent to setting $q=\infty$ in the per-unit regularizer. 
 \end{definition}
 \end{frame}
 
-\begin{frame}{Usage of Max-norm regularizer}
+\begin{frame}{Issues with Max-norm regularizer}
 
 \bit
 \item Max-norm regularization is
@@ -288,6 +311,11 @@ the highest value among all nodes.
 
 \item This could be because of RELU networks can be rebalanced such that all hidden units have the similar norm. 
 
+\eit 
+\end{frame} 
+
+\begin{frame}{Issues with Max-norm regularizer}
+\bit 
 \item The max-norm regularizer $\mu_{p,\infty}$ is also \textbf{not} rescaling invariant.
 
 \item We want a rescaling-invariant regularizer. 
@@ -322,9 +350,8 @@ $\pi(\textbf{w})$:
 
 \end{definition}
 
-\bit 
-\item What would be the complexity of computing $\phi_p(\mathbf{w})$ ? 
-\eit
+\textit{What would be the complexity of computing $\phi_p(\mathbf{w})$ ? 
+}
 \end{frame}
 
 \begin{frame}{Computation of $\ell_p$-path regularizer}
@@ -345,29 +372,30 @@ efficiently in a \emph{single forward step} by the following recursive definitio
 
 \begin{lemma}
 	The $\ell_p$-path regularizer and per-unit regularizer satisfy the following relation :
-	$$\displaystyle \phi_p(w) = \min_{\tilde{w} \sim w} \bigg(\mu_{p,\infty}(\tilde{w})\bigg)^d$$
-where $d$ is the depth of the neural network. 
+	$$\displaystyle \phi_p(\mathbf{w}) = \min_{\tilde{\mathbf{w}} \sim \mathbf{w}} \bigg(\mu_{p,\infty}(\tilde{\mathbf{w}})\bigg)^d$$
+		
+	where $d$ is the depth of the neural network. 
 \end{lemma}
 
 \item Hence the $\ell_p$ path-regularizer $\phi_p$ is invariant to rescaling. 
 
- For any $\tilde{w} \sim w$, $\phi_p(\tilde{w})=\phi_p(w)$
+ For any $\tilde{\mathbf{w}} \sim \mathbf{w}$, $\phi_p(\tilde{\mathbf{w}})=\phi_p(\mathbf{w})$
 \eit 
 \end{frame}
 
 \section{Path-SGD: Approximate Path-Regularized Steepest Descent}
 \begin{frame}{Steepest Descent w.r.t. $\ell_p$-path regularizer}
 \bit
-\item The steepest descent direction is the solution to the optimization problem 
+\item The steepest descent update is given by the solution to the optimization problem 
 \begin{align*}
-w^{(t+1)} :=&\arg\min_w \;\;\eta \nabla L(w^{(t)}) (w-w^{(t)}) + \frac{1}{2}\norm{\pi(w)-\pi(w^{(t)})}_p^2\\ 
- = &\arg\min_w J^{(t)}(w)
+\textbf{w}^{(t+1)} :=&\arg\min_{\textbf{w}} \;\;\eta \nabla L(\textbf{w}^{(t)}) (\textbf{w}-\textbf{w}^{(t)}) + \frac{1}{2}\norm{\pi(\textbf{w})-\pi(\textbf{w}^{(t)})}_p^2\\ 
+ = &\arg\min_{\textbf{w}} \; \; J^{(t)}(\textbf{w})
 \end{align*}
 
 \item Here the path regularizer term is 
 \begin{equation*}
 \resizebox{\hsize}{!}{%
-$\displaystyle \norm{\pi(w)-\pi(w^{(t)})}_p^2 = \left(\sum_{\vin[i] \overset{e_1}\rightarrow v_1\overset{e_2}\rightarrow v_2\dots\overset{e_d}{\rightarrow}\vout[j]}\left(\prod_{k=1}^d w_{e_k} - \prod_{k=1}^d w^{(t)}_{e_k})\right)^p\right)^{2/p}$
+$\displaystyle \norm{\pi(\textbf{w})-\pi(\textbf{w}^{(t)})}_p^2 = \left(\sum_{\vin[i] \overset{e_1}\rightarrow v_1\overset{e_2}\rightarrow v_2\dots\overset{e_d}{\rightarrow}\vout[j]}\left(\prod_{k=1}^d \textbf{w}_{e_k} - \prod_{k=1}^d \textbf{w}^{(t)}_{e_k})\right)^p\right)^{2/p}$
 }
 \end{equation*}
 \eit 
@@ -375,83 +403,156 @@ $\displaystyle \norm{\pi(w)-\pi(w^{(t)})}_p^2 = \left(\sum_{\vin[i] \overset{e_1
 
 \begin{frame}{Steepest descent w.r.t. $\ell_p$-path regularizer}
 \bit 
-\item The steepest descent step direction is hard to calculate exactly.  
+\item The steepest descent step is hard to calculate exactly.  
 
-\item Instead, we will update each coordinate $w_e$ independently (and synchronously) based 
+\item Instead, we will update each coordinate $\textbf{w}_e$ independently (and synchronously)  
 \begin{equation}
-w_e^{(t+1)} =\arg\min_{w_e} \;J^{(t)}(w) \qquad \text{s.t.}\;\;\forall_{e'\neq e} \;\; w_{e'}=w^{(t)}_{e'}
+\textbf{w}_e^{(t+1)} =\arg\min_{\textbf{w}_e} \;J^{(t)}(\textbf{w}) \qquad \text{s.t.}\;\;\forall_{e'\neq e} \;\; \textbf{w}_{e'}=\textbf{w}^{(t)}_{e'}
 \end{equation}
 
-\item Taking the partial derivative with respect to $w_e$ and setting it to zero we obtain:
+\item Taking the partial derivative with respect to $\textbf{w}_e$ and setting it to zero we obtain:
 \begin{equation*}
-0 =\eta \frac{\partial L}{\partial w_e}(w^{(t)}) - \left(w_e-w^{(t)}_e\right) \left(\sum_{v_{\text{in}}[i] \dots \stackrel{e}{\rightarrow} \dots v_{\text{out}}[j]} \prod_{e_k\neq e} |{w^{(t)}_e}^p|\right)^{2/p}
+0 =\eta \frac{\partial L}{\partial \textbf{w}_e}(\textbf{w}^{(t)}) - \left(\textbf{w}_e-\textbf{w}^{(t)}_e\right) 
+\left(\sum_{v_{\text{in}}[i] \dots \stackrel{e}{\rightarrow} \dots v_{\text{out}}[j]} \prod_{e_k\neq e} |{\textbf{w}^{(t)}_e}^p|\right)^{2/p}
 \end{equation*}
 \item $v_{\text{in}}[i] \dots \stackrel{e}{\rightarrow} \dots v_{\text{out}}[j]$ denotes the paths from the  $i$-th input unit to the $j$-th output unit that includes edge $e$. 
 \eit 
 \end{frame}
 
 \begin{frame}{Path-SGD}
-Solving for $w_e$  gives us the following update rule:
+\bit 
+\item Solving for $\textbf{w}_e$ gives the update rule:
 \begin{equation*}
-\hat{w}^{(t+1)}_e = w^{(t)}_e- \frac{\eta}{\gamma_p(w^{(t)},e)}\frac{\partial L}{\partial w}(w^{(t)})
+\hat{\textbf{w}}^{(t+1)}_e = \textbf{w}^{(t)}_e- \frac{\eta}{\gamma_p(\textbf{w}^{(t)},e)}\frac{\partial L}{\partial \textbf{w}}(\textbf{w}^{(t)})
 \end{equation*}
 
-Here $\gamma_p(w,e)$ is defined defined as 
+\item Here $\gamma_p(\textbf{w},e)$ is defined as 
 \begin{equation*}
-\gamma_p(w,e) =\left(\sum_{v_{\text{in}}[i] \dots \stackrel{e}{\rightarrow} \dots v_{\text{out}}[j]} \prod_{e_k\neq e} |{w_{e_k}}|^p\right)^{2/p}
+\gamma_p(\textbf{w},e) =\left(\sum_{v_{\text{in}}[i] \dots \stackrel{e}{\rightarrow} \dots v_{\text{out}}[j]} \prod_{e_k\neq e} |{\textbf{w}_{e_k}}|^p\right)^{2/p}
 \end{equation*}
 
-The optimization algorithms with the above update rule is called \emph{path-normalized gradient descent}. When used in stochastic settings, we refer to it as \emph{\RSGD}.
+\item The optimization algorithms with the above update rule is called \emph{path-normalized gradient descent}. 
+
+\item In stochastic settings, we refer to it as \emph{\RSGD}.
+\eit 
 \end{frame}
 
 \begin{frame}{\RSGD}
 \begin{theorem}
-	\RSGD is rescaling invariant.
+	\RSGD is rescaling invariant, i.e. for any $c>0$ and $v\in E$, $$\tilde{\textbf{w}}^{(t)} = \rho_{c,v}(\textbf{w}^{(t)}) \quad \Rightarrow \quad \tilde{\textbf{w}}^{(t+1)} = \rho_{c,v}(\textbf{w}^{(t+1)})$$ 
 \end{theorem}
 \bit 
-\item It is sufficient to prove that for any $c>0$ and any $v\in E$, if $\tilde{w}^{(t)} = \rho_{c,v}(w^{(t)})$, then $\tilde{w}^{(t+1)} = \rho_{c,v}(w^{(t+1)})$ 
 
-\item For any edge $e$ in the network, if $e$ is neither incoming nor outgoing edge of the node $v$, then $\tilde{w}(e)=w(e)$, and since the gradient is also the same for edge $e$ we have $\tilde{w}^{(t+1)}_e=w^{(t+1)}_e$
+\item If edge $e$ is neither incoming nor outgoing edge of the node $v$, then $\tilde{\textbf{w}}(e)=\textbf{w}(e)$ and $\tilde{\textbf{w}}^{(t+1)}_e=\textbf{w}^{(t+1)}_e$
 
-\item If $e$ is an incoming edge to $v$, we have that $\tilde{w}^{(t)}(e)=cw^{(t)}(e)$.
+\item If edge $e$ is an incoming edge to $v$, then $\tilde{\textbf{w}}^{(t)}(e)=c\textbf{w}^{(t)}(e)$.
 
-\item Since the outgoing edges of $v$ are divided by $c$, we get $\gamma_p(\tilde{w}^{(t)},e) = \frac{\gamma_p(w^{(t)},e)}{c^2}$ and $\frac{\partial L}{\partial w_e}(\tilde{w}^{(t)})= \frac{\partial L}{c\partial w_e}(w^{(t)})$
+\item In this case, outgoing edges of $v$ are divided by $c$. Therefore 
+\begin{equation*}
+\gamma_p(\tilde{\textbf{w}}^{(t)},e) = \frac{\gamma_p(\textbf{w}^{(t)},e)}{c^2}, \quad  \frac{\partial L}{\partial \textbf{w}_e}(\tilde{\textbf{w}}^{(t)})= \frac{\partial L}{c\partial \textbf{w}_e}(\textbf{w}^{(t)})
+\end{equation*} 
 
 \eit 
 \end{frame} 
 
 \begin{frame}{\RSGD}
 \bit 
-\item We can now see that
+\item The \RSGD update on $\tilde{\mathbf{w}}$ is 
 \begin{align*}
-{\tilde{w}}^{(t+1)}_e &= cw^{(t)}_e - \frac{c^2\eta}{\gamma_p(w^{(t)},e)} \frac{\partial L}{c\partial w_e}(w^{(t)})\\
-&= c\left(w^{(t)} - \frac{\eta}{\gamma_p(w^{(t)},e)} \frac{\partial L}{\partial w_e}(w^{(t)})\right) = cw^{(t+1)}_e.
+{\tilde{\textbf{w}}}^{(t+1)}_e &= c\textbf{w}^{(t)}_e - \frac{c^2\eta}{\gamma_p(\textbf{w}^{(t)},e)} \cdot \frac{\partial L}{c\partial \textbf{w}_e}(\textbf{w}^{(t)})\\
+&= c\left(\textbf{w}^{(t)} - \frac{\eta}{\gamma_p(\textbf{w}^{(t)},e)} \cdot \frac{\partial L}{\partial \textbf{w}_e}(\textbf{w}^{(t)})\right) = c\textbf{w}^{(t+1)}_e.
 \end{align*}
 
-\item A similar argument proves the invariance of \RSGD update rule for outgoing edges of $v$. Therefore, \RSGD is rescaling invariant.
+\item A similar argument follows when $e$ is an outgoing edge of node $v$. 
+
+\item Therefore, \RSGD is rescaling invariant.
 \eit 
 \end{frame}
 
-\section{Experiments}
+\section{Experiments} 
 
-\begin{frame}{CIFAR-10}
-\begin{figure}[t!]
-	\begin{tabular}{lll}
-		\includegraphics[scale=0.16]{cifar10-surr.pdf} & 
-		\includegraphics[scale=0.16]{cifar10-train.pdf} &
-		\includegraphics[scale=0.16]{cifar10-test.pdf} 
-	\end{tabular} 
-	\begin{picture}(0,0)(0,0)
-	\rotatebox{90}{\put(342, 0){CIFAR-10}}
-	\end{picture}
-	\begin{picture}(0,0)(0,0)
-	{\put(30, 420){\small Cross-Entropy Training Loss}\put(187, 420){\small 0/1 Training Error}\put(328, 420){ \small 0/1 Test Error}}
-	\end{picture}
-	\caption{\small to be filled}
-	\label{fig:nodrop}
-	\vspace{-0.1in}
-\end{figure}
+\begin{frame}{Computational Setup}
+
+\bit 
+\item Feed-forward networks with 2 layers of 4000 hidden units each. 
+\item Minibatches of size 100, step size $10^{-\alpha}$ for integer $\alpha <10$.
+\item Initialization for edge weights
+\begin{enumerate}
+	\item Balanced : weights drawn i.i.d from Gaussain Distribution. 
+	\item Unbalanced : Choose balanced weights and rescale 2000 hidden units by scale factor c. 
+\end{enumerate}  
+\item Dropout with $0.5$ probability of retaining each unit. 
+\item Dropout experiments only on balanced networks. 
+\eit 
+
 \end{frame}
+
+\begin{frame}{Experiments without Dropout : CIFAR-10 and MNIST Dataset}
+	\centering
+	\begin{tabular}{ccc}
+		\includegraphics[width=0.33\linewidth]{cifar10-surr.pdf} &
+		\includegraphics[width=0.33\linewidth]{cifar10-train.pdf} &
+		\includegraphics[width=0.33\linewidth]{cifar10-test.pdf} \\
+		\includegraphics[width=0.33\linewidth]{mnist-surr.pdf} &
+		\includegraphics[width=0.33\linewidth]{mnist-train.pdf} &
+		\includegraphics[width=0.33\linewidth]{mnist-test.pdf} \\
+		\scriptsize epochs & \scriptsize epochs & \scriptsize epochs \\
+		& & \\ 
+		Cross Entropy Loss & Training Error & Testing Error
+	\end{tabular}
+	\begin{picture}(0,-100)(150,-10)
+	\rotatebox{90}{\put(120, 400){CIFAR-10}\put(50, 400){MNIST}}
+	\end{picture}
+\end{frame}
+
+\begin{frame}{Discussion for no-dropout case}
+	\bit 
+	\item Learning curves of \RSGD on balanced and unbalanced initializations were nearly identical.  
+	
+	\item Unbalanced initialization drastically affects SGD and AdaGrad. 
+	
+	\item \RSGD converges faster than SGD and AdaGrad. 
+	
+	\item \RSGD also has lesser testing error (better implicit regularization?). 
+	
+	\eit 
+\end{frame}
+
+\begin{frame}{Experiments with Dropout: CIFAR-10 and MNIST Dataset}
+	\centering
+	\begin{tabular}{ccc}
+		\includegraphics[width=0.33\linewidth]{drop-cifar10-surr.pdf} &
+		\includegraphics[width=0.33\linewidth]{drop-cifar10-train.pdf} &
+		\includegraphics[width=0.33\linewidth]{drop-cifar10-test.pdf} \\
+		\includegraphics[width=0.33\linewidth]{drop-mnist-surr.pdf} &
+		\includegraphics[width=0.33\linewidth]{drop-mnist-train.pdf} &
+		\includegraphics[width=0.33\linewidth]{drop-mnist-test.pdf} \\
+	\scriptsize epochs & \scriptsize epochs & \scriptsize epochs \\
+	& & \\ 
+	Cross Entropy Loss & Training Error & Testing Error
+\end{tabular}
+\begin{picture}(0,-100)(150,-10)
+\rotatebox{90}{\put(120, 400){CIFAR-10}\put(50, 400){MNIST}}
+\end{picture}
+\par
+\end{frame}
+
+\begin{frame}{Discussion for dropout case}
+\bit 
+\item \RSGD is atleast as fast as SGD and AdaGrad. (Much faster for CIFAR-10).  
+\item \RSGD again has lesser testing error. 
+\item Thus empirically, \RSGD achieves the same accuracy faster and generalizes better. 
+\eit 
+\end{frame}
+
 \section{Conclusion}
 
+\begin{frame}{Conclusion : Effects of Geometry}
+\bit 
+\item Choosing alternative geometry can result in faster optimization and better generalization. 
+\item Rescaling Invariance is an appropriate property for RELU networks. 
+\item \RSGD empirically performs better even for unbalanced networks. 
+\item Combining \RSGD with momentum or other heuresitcs might improve results.
+\eit 	
+\end{frame}
 \end{document}
